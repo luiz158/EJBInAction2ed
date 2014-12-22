@@ -1,15 +1,12 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package ejb3inaction.example;
 
 import javax.ejb.EJB;
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,8 +22,8 @@ public class HelloUserBeanTest {
 
     @Deployment
     public static Archive<?> createDeployment() {
-        return ShrinkWrap.create(JavaArchive.class, "foo.jar")
-        .addClasses(HelloUserBean.class);
+        return ShrinkWrap.create(WebArchive.class, "client1-test.war")
+        .addClasses(HelloUser.class, HelloUserBean.class);
     }
 
     /**

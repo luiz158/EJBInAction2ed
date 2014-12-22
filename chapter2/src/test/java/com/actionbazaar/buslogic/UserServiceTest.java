@@ -16,27 +16,23 @@
  */
 package com.actionbazaar.buslogic;
 
-import com.actionbazaar.persistence.Bid;
 import com.actionbazaar.persistence.Bidder;
-import com.actionbazaar.persistence.Item;
-import javax.ejb.EJB;
-import org.jboss.arquillian.api.Deployment;
-import org.jboss.arquillian.api.Run;
-import org.jboss.arquillian.api.RunModeType;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import javax.ejb.EJB;
 
 /**
  * This verifies that users can be persisted and retrieved.
  */
 @RunWith(Arquillian.class)
-@Run(RunModeType.IN_CONTAINER)
 public class UserServiceTest {
 
     /**
@@ -51,10 +47,15 @@ public class UserServiceTest {
      */
     @Deployment
     public static Archive<?> createDeployment() {
-        return ShrinkWrap.create(JavaArchive.class, "foo.jar").addClasses(OrderProcessor.class,
-                OrderProcessorBean.class,UserService.class,UserServiceBean.class,
-                ItemService.class,
-                ItemServiceBean.class, Bid.class, Bidder.class, Item.class).addManifestResource("test-persistence.xml", ArchivePaths.create("persistence.xml"));
+        return ShrinkWrap.create(WebArchive.class, "chapter2-test.war")
+                .addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+                .addAsWebInfResource("test-ds.xml")
+                        // add all classes under com.actionbazaar.persistence
+                .addPackage(Bidder.class.getPackage())
+                        // add all classes under com.actionbazaar.buslogic
+                .addPackage(OrderProcessor.class.getPackage())
+                ;
     }
 
     /**
